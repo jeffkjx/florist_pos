@@ -60,9 +60,9 @@ florist_pos/
 
 ## 🔑 Admin Login
 
-- **Username**: `admin`  
+- **Username**: `admin`
 - **Password**: `admin`  
-(Stored as SHA256 hash in the `admins` table)
+  (Stored as SHA256 hash in the `admins` table)
 
 ---
 
@@ -83,4 +83,4 @@ This project is provided for educational purposes. You may use and adapt it free
 
 ## 🙏 Acknowledgements
 
-Developed as a sample POS project for florist operations. Includes sample flower images and essential e-commerce logic.
+This project was developed as part of the Web Technique and Applications course. It serves as a practical implementation of core concepts in web development, including front-end interface design, server-side scripting, database interaction, and basic system functionality. The system was designed to simulate a real-world florist point-of-sale environment for academic and learning purposes.
