@@ -80,3 +80,5 @@ $items = get_all_items();
     <script src="assets/js/script.js"></script>
 </body>
 </html>
+
+            <!-- new comments -->
