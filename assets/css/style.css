@@ -236,6 +236,48 @@ header button:hover {
     background-color: #2b8b58;
 }
 
+.receipt-buttons .download-btn {
+    background: #6c63ff;
+    color: white;
+    border: none;
+}
+
+.receipt-buttons .download-btn:hover {
+    background-color: #4f46e5;
+}
+
+
+@media print {
+  body {
+    font-family: monospace;
+    font-size: 12px;
+    background: white;
+    color: black;
+    margin: 0;
+    padding: 10px;
+    line-height: 1.4;
+  }
+
+  .receipt-buttons {
+    display: none !important;
+  }
+
+  html, body {
+    width: 62mm; /* thermal receipt width */
+  }
+
+  pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  @page {
+    margin: 10mm;
+    size: 58mm auto; /* width x auto height */
+  }
+}
+
+
 
 /* Admin modal */
 .modal {

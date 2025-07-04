@@ -147,10 +147,13 @@ document.addEventListener("DOMContentLoaded", function () {
             </head>
             <body>
                 <pre>${receiptText}</pre>
+
                 <div class="receipt-buttons">
                     <button class="ok-btn" onclick="window.close()">OK</button>
-                    <button class="print-btn" onclick="downloadReceipt()">Print</button>
+                    <button class="download-btn" onclick="downloadReceipt()">Download</button>
+                    <button class="print-btn" onclick="window.print()">Print</button>
                 </div>
+
                 <script>
                     function downloadReceipt() {
                         const blob = new Blob([\`${receiptText}\`], { type: 'text/plain' });
@@ -160,6 +163,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         link.click();
                     }
                 <\/script>
+
             </body>
             </html>
         `);

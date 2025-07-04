@@ -60,7 +60,7 @@ try {
     $_SESSION['cart'] = [];
 
     // 🧾 Generate centered receipt with item prices
-    $lineWidth = 34;
+    $lineWidth = 32;
 
     function centerLine($text, $width = 30) {
         return str_pad($text, $width + floor((strlen($text) - strlen(trim($text))) / 2), " ", STR_PAD_BOTH);
