@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const clearCartBtn = document.getElementById("clearCartBtn");
     const checkoutBtn = document.getElementById("checkoutBtn");
 
-    // Initialize cart from DOM
     itemCards.forEach(card => {
         const id = card.dataset.id;
         const cartQty = parseInt(card.querySelector(".cart").textContent);
@@ -68,37 +67,30 @@ document.addEventListener("DOMContentLoaded", function () {
                 hasItem = true;
             }
 
-            // Update minus button state on every render
             updateButtonState(id, cart[id]);
         });
 
         totalPriceEl.textContent = total.toFixed(2);
-
-        // Toggle Clear Cart button visibility
         clearCartBtn.style.display = hasItem ? "inline-block" : "none";
-
-        // Enable or disable Checkout button
         checkoutBtn.disabled = !hasItem;
         checkoutBtn.style.cursor = hasItem ? "pointer" : "not-allowed";
     }
 
-    // Attach + and - buttons
     itemCards.forEach(card => {
         const id = card.dataset.id;
         card.querySelector(".plus").addEventListener("click", () => updateDOM(id, 1));
         card.querySelector(".minus").addEventListener("click", () => updateDOM(id, -1));
     });
 
-    // Admin modal logic
     const adminBtn = document.getElementById("adminBtn");
     const adminModal = document.getElementById("adminModal");
     const closeBtn = document.querySelector(".closeBtn");
 
-    adminBtn.addEventListener("click", () => {
+    adminBtn?.addEventListener("click", () => {
         adminModal.style.display = "block";
     });
 
-    closeBtn.addEventListener("click", () => {
+    closeBtn?.addEventListener("click", () => {
         adminModal.style.display = "none";
     });
 
@@ -108,7 +100,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Checkout handler
     checkoutBtn.addEventListener("click", () => {
         const data = { cart: cart };
         fetch("checkout.php", {
@@ -120,28 +111,15 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .then(res => res.json())
         .then(result => {
-
-            if (result.success) {
-                alert("Checkout successful!");
-
-                if (result.receipt_url && result.filename) {
-                    const link = document.createElement("a");
-                    link.href = result.receipt_url;
-                    link.download = result.filename;  // use actual filename (e.g., receipt_1.txt)
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                }
-
-                setTimeout(() => location.reload(), 500);
-            }
-            else {
+            if (result.success && result.receipt_text) {
+                showReceiptPopup(result.receipt_text, result.filename || "receipt.txt");
+                setTimeout(() => location.reload(), 1000);
+            } else {
                 alert("Checkout failed: " + result.message);
             }
         });
     });
 
-    // Clear Cart handler
     clearCartBtn.addEventListener("click", () => {
         itemCards.forEach(card => {
             const id = card.dataset.id;
@@ -159,6 +137,34 @@ document.addEventListener("DOMContentLoaded", function () {
         renderCart();
     });
 
-    // Initial render
+    function showReceiptPopup(receiptText, filename) {
+        const popup = window.open('', '_blank', 'width=400,height=600');
+        popup.document.write(`
+            <html>
+            <head>
+                <title>Receipt</title>
+                <link rel="stylesheet" href="assets/css/style.css">
+            </head>
+            <body>
+                <pre>${receiptText}</pre>
+                <div class="receipt-buttons">
+                    <button class="ok-btn" onclick="window.close()">OK</button>
+                    <button class="print-btn" onclick="downloadReceipt()">Print</button>
+                </div>
+                <script>
+                    function downloadReceipt() {
+                        const blob = new Blob([\`${receiptText}\`], { type: 'text/plain' });
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(blob);
+                        link.download = '${filename}';
+                        link.click();
+                    }
+                <\/script>
+            </body>
+            </html>
+        `);
+        popup.document.close();
+    }
+
     renderCart();
 });

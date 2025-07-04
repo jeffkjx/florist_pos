@@ -199,6 +199,44 @@ header button:hover {
     cursor: not-allowed;
 }
 
+/* === Receipt Popup Buttons === */
+.receipt-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.receipt-buttons button {
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.receipt-buttons .ok-btn {
+    background: white;
+    color: #2b8b58;
+    border: 2px solid #2b8b58;
+}
+
+.receipt-buttons .ok-btn:hover {
+    background: #e8f6ee;
+}
+
+.receipt-buttons .print-btn {
+    background: #5ad17e;
+    color: white;
+    border: none;
+}
+
+.receipt-buttons .print-btn:hover {
+    background-color: #2b8b58;
+}
+
+
 /* Admin modal */
 .modal {
     display: none;

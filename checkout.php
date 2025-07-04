@@ -99,11 +99,13 @@ try {
     }
     file_put_contents($receiptFile, $receiptText);
 
+
     echo json_encode([
         'success' => true,
-        'receipt_url' => $receiptFile,
+        'receipt_text' => $receiptText,
         'filename' => basename($receiptFile)
     ]);
+
 
 } catch (Exception $e) {
     $pdo->rollBack();
