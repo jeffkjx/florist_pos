@@ -82,7 +82,7 @@ florist_pos/
 - Popup provides **3 buttons**:
   - ✅ OK — closes popup
   - 📄 Download — saves `.txt` file (e.g., `receipt_3.txt`)
-  - 🖨️ Print — styled print with 58mm paper simulation
+  - 🖨️ Print — styled print with 62mm paper simulation
 
 ---
 
