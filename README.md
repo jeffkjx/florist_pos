@@ -93,6 +93,7 @@ florist_pos/
    - Import `sql/florist_pos.sql` using phpMyAdmin or MySQL CLI
 3. **Check file permissions:**
    - Ensure `uploads/` and `receipts/` folders are writable by the server
+   - You may check the permission using `check_permission.php`
 4. **Run the app:**
    - Place folder in XAMPP `htdocs` or equivalent
    - Open `index.php` to use the POS
