@@ -120,10 +120,22 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .then(res => res.json())
         .then(result => {
+
             if (result.success) {
                 alert("Checkout successful!");
-                location.reload();
-            } else {
+
+                if (result.receipt_url && result.filename) {
+                    const link = document.createElement("a");
+                    link.href = result.receipt_url;
+                    link.download = result.filename;  // use actual filename (e.g., receipt_1.txt)
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+
+                setTimeout(() => location.reload(), 500);
+            }
+            else {
                 alert("Checkout failed: " + result.message);
             }
         });

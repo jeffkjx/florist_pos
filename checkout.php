@@ -1,9 +1,9 @@
 <?php
 session_start();
+date_default_timezone_set('Asia/Kuala_Lumpur');
 require_once 'includes/functions.php';
 header('Content-Type: application/json');
 
-// Read raw JSON input
 $input = json_decode(file_get_contents('php://input'), true);
 
 if (!isset($input['cart']) || !is_array($input['cart'])) {
@@ -16,9 +16,7 @@ $total = 0;
 $pdo->beginTransaction();
 
 try {
-    $hasValidItem = false;
-
-    // Calculate total and verify stock
+    $itemsSummary = [];
     foreach ($cart as $itemId => $qty) {
         $item = get_item_by_id($itemId);
         if (!$item || $qty < 1) continue;
@@ -29,11 +27,16 @@ try {
         }
 
         $total += $item['price'] * $qty;
-        $hasValidItem = true;
+        $itemsSummary[] = [
+            'name' => $item['name'],
+            'qty' => $qty,
+            'unit_price' => $item['price']
+        ];
     }
 
-    if (!$hasValidItem || $total <= 0) {
-        throw new Exception("Cart is empty or total is zero. Cannot checkout.");
+    if (empty($itemsSummary)) {
+        echo json_encode(['success' => false, 'message' => 'Cart is empty']);
+        exit;
     }
 
     // Insert transaction
@@ -54,9 +57,54 @@ try {
     }
 
     $pdo->commit();
-    $_SESSION['cart'] = []; // Clear cart
+    $_SESSION['cart'] = [];
 
-    echo json_encode(['success' => true]);
+    // 🧾 Generate centered receipt with item prices
+    $lineWidth = 34;
+
+    function centerLine($text, $width = 30) {
+        return str_pad($text, $width + floor((strlen($text) - strlen(trim($text))) / 2), " ", STR_PAD_BOTH);
+    }
+
+    $receiptLines = [];
+    $receiptLines[] = str_repeat("-", $lineWidth);
+    $receiptLines[] = centerLine("Bloom Florist", $lineWidth);
+    $receiptLines[] = "";
+    $receiptLines[] = centerLine(date("d.m.Y H:i"), $lineWidth);
+    $receiptLines[] = str_repeat("-", $lineWidth);
+    $receiptLines[] = centerLine("RECEIPT", $lineWidth);
+    $receiptLines[] = str_repeat("-", $lineWidth);
+    $receiptLines[] = "";
+
+    foreach ($itemsSummary as $item) {
+        $line = "{$item['name']}(" . number_format($item['unit_price'], 2) . ") x {$item['qty']} = " . number_format($item['qty'] * $item['unit_price'], 2);
+        $receiptLines[] = centerLine($line, $lineWidth);
+    }
+
+    $receiptLines[] = "";
+    $receiptLines[] = centerLine("Total: " . number_format($total, 2), $lineWidth);
+    $receiptLines[] = "";
+    $receiptLines[] = str_repeat("-", $lineWidth);
+    $receiptLines[] = centerLine("Thank you", $lineWidth);
+    $receiptLines[] = centerLine("Please come again", $lineWidth);
+    $receiptLines[] = str_repeat("-", $lineWidth);
+
+    $receiptText = implode("\n", $receiptLines);
+
+
+    // Save receipt to file
+    $receiptFile = "receipts/receipt_{$transactionId}.txt";
+    if (!is_dir("receipts")) {
+        mkdir("receipts", 0755, true);
+    }
+    file_put_contents($receiptFile, $receiptText);
+
+    echo json_encode([
+        'success' => true,
+        'receipt_url' => $receiptFile,
+        'filename' => basename($receiptFile)
+    ]);
+
 } catch (Exception $e) {
     $pdo->rollBack();
     echo json_encode(['success' => false, 'message' => $e->getMessage()]);
